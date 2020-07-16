@@ -93,8 +93,8 @@ earlier adventurers. The only exit is to the south."""),
 }
 
 room_list = {
-    "ground": ["hall", "foyer", "stair", "game", "library", "char", "patio", "dining", "dust", "abandoned", "kitchen"
+    "ground": ["game", "library", "char", "patio", "dining", "dust", "abandoned", "kitchen"
     ],
-    "basement": ["basement", "organ", "creak", "lab", "lard", "lake", "furnace"],
-    "upper": ["upper", "bloody", "statu", "conserve"]
+    "basement": ["organ", "creak", "lab", "lard", "lake", "furnace"],
+    "upper": ["bloody", "statu", "conserve"]
 }

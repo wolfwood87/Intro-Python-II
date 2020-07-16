@@ -13,3 +13,14 @@ class Room:
         self.w_to = w_to
     def __str__(self):
         return self.key
+    def get_directions(self):
+        output = []
+        if(self.n_to != ""):
+            output.append("north")
+        if(self.s_to != ""):
+            output.append("south")
+        if(self.w_to != ""):
+            output.append("west")
+        if(self.e_to != ""):
+            output.append("east")
+        return output

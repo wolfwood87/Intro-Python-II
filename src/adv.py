@@ -7,18 +7,56 @@ import random
 
 print(room_list)
 # Link rooms together
-roomground = random.randint(1, len(room_list["ground"])-1)
-roomup = random.randint(1, len(room_list["upper"])-1)
-roombase = random.randint(1, len(room_list["basement"])-1)
+random.shuffle(room_list["ground"])
+print(room_list)
+random.shuffle(room_list["upper"])
+random.shuffle(room_list["basement"])
 roomi["hall"].n_to = roomi["foyer"]
+roomi["hall"].e_to = roomi[room_list["ground"][0]]
+roomi["hall"].w_to = roomi[room_list["ground"][3]]
+roomi[room_list["ground"][3]].e_to = roomi["hall"]
+roomi[room_list["ground"][0]].w_to = roomi["hall"]
+roomi[room_list["ground"][0]].n_to = roomi[room_list["ground"][1]]
+roomi[room_list["ground"][0]].e_to = roomi[room_list["ground"][2]]
+roomi[room_list["ground"][1]].s_to = roomi[room_list["ground"][0]]
+roomi[room_list["ground"][1]].w_to = roomi["foyer"]
+roomi[room_list["ground"][2]].w_to = roomi[room_list["ground"][0]]
 roomi["foyer"].n_to = roomi["stair"]
 roomi["foyer"].s_to = roomi["hall"]
+roomi["foyer"].w_to = roomi[room_list["ground"][4]]
+roomi[room_list["ground"][3]].n_to = roomi[room_list["ground"][4]]
+roomi[room_list["ground"][4]].s_to = roomi[room_list["ground"][3]]
+roomi[room_list["ground"][4]].w_to = roomi[room_list["ground"][5]]
+roomi[room_list["ground"][5]].e_to = roomi[room_list["ground"][4]]
+roomi[room_list["ground"][4]].n_to = roomi[room_list["ground"][6]]
+roomi[room_list["ground"][6]].s_to = roomi[room_list["ground"][4]]
+roomi[room_list["ground"][5]].n_to = roomi[room_list["ground"][7]]
+roomi[room_list["ground"][7]].s_to = roomi[room_list["ground"][5]]
+roomi[room_list["ground"][7]].e_to = roomi[room_list["ground"][6]]
 roomi["stair"].n_to = roomi["upper"]
+roomi["upper"].n_to = roomi["stair"]
+roomi["upper"].w_to = roomi[room_list["upper"][0]]
+roomi["upper"].s_to = roomi[room_list["upper"][1]]
+roomi[room_list["upper"][0]].e_to = roomi["upper"]
+roomi[room_list["upper"][1]].n_to = roomi["hall"]
+roomi[room_list["upper"][1]].w_to = roomi[room_list["upper"][2]]
+roomi[room_list["upper"][0]].s_to = roomi[room_list["upper"][2]]
+roomi[room_list["ground"][2]].e_to = roomi[room_list["ground"][1]]
 roomi["stair"].s_to = roomi["foyer"]
 roomi["stair"].e_to = roomi["basement"]
 roomi["basement"].w_to = roomi["stair"]
-
-
+roomi["basement"].e_to = roomi[room_list["basement"][0]]
+roomi[room_list["basement"][0]].w_to = roomi["basement"]
+roomi[room_list["basement"][0]].n_to = roomi[room_list["basement"][2]]
+roomi[room_list["basement"][2]].s_to = roomi[room_list["basement"][0]]
+roomi[room_list["basement"][0]].e_to = roomi[room_list["basement"][3]]
+roomi[room_list["basement"][3]].w_to = roomi[room_list["basement"][0]]
+roomi[room_list["basement"][3]].e_to = roomi[room_list["basement"][4]]
+roomi[room_list["basement"][4]].w_to = roomi[room_list["basement"][3]]
+roomi[room_list["basement"][2]].w_to = roomi[room_list["basement"][5]]
+roomi[room_list["basement"][5]].w_to = roomi[room_list["basement"][2]]
+roomi["basement"].s_to = roomi[room_list["basement"][1]]
+roomi[room_list["basement"][1]].n_to = roomi["basement"]
 #
 # Main
 #
@@ -60,148 +98,131 @@ Select a player:""")
 #
 # If the user enters "q", quit the game.
 print(f"You are currently in the {gameplayer.room}.")
-print(roomi[f"{gameplayer.room}"].description)
+diroutput = ""
+directions = roomi[f"{gameplayer.room}"].get_directions()
+for i in range(len(directions)):
+    if(i == len(directions) - 1 and len(directions) >= 1):
+        diroutput += f" and {directions[i]}."
+    elif(i == len(directions) -1 and len(directions) == 0):
+        diroutput += f" {directions[i]}."
+    else:
+        diroutput += f" {directions[i]}"
+
+print(roomi[f"{gameplayer.room}"].description, f"You may explore rooms to the{diroutput}")
 game = input("Please choose a direction to get started or select q to quit:\n")
 
 while(game != "q"):
     if(game.lower() == "n"):
         if(roomi[f"{gameplayer.room}"].n_to == ""):
-            if f"{gameplayer.room}" in room_list["ground"]:
-                roomi[f"{gameplayer.room}"].n_to = roomi[room_list["ground"][roomground]]
-                roomi[room_list["ground"][roomground]].s_to = roomi[f"{gameplayer.room}"]
-                roomground = random.randint(1, len(room_list["ground"]))
-                gameplayer.room = roomi[f"{gameplayer.room}"].n_to
-                print(f"You are currently in the {gameplayer.room}.")
-                print(roomi[f"{gameplayer.room}"].description)
-                game = input("Please choose a direction or select q to quit:\n")
-            elif f"{gameplayer.room}" in room_list["basement"]:
-                roomi[f"{gameplayer.room}"].n_to = roomi[room_list["basement"][roombase]]
-                roomi[room_list["basement"][roombase]].s_to = roomi[f"{gameplayer.room}"]
-                roombase = random.randint(1, len(room_list["basement"]))
-                gameplayer.room = roomi[f"{gameplayer.room}"].n_to
-                print(f"You are currently in the {gameplayer.room}.")
-                print(roomi[f"{gameplayer.room}"].description)
-                game = input("Please choose a direction or select q to quit:\n")
-            elif f"{gameplayer.room}" in room_list["upper"]:
-                roomi[f"{gameplayer.room}"].n_to = roomi[room_list["upper"][roomup]]
-                roomi[room_list["upper"][roomup]].s_to = roomi[f"{gameplayer.room}"]
-                roomup = random.randint(1, len(room_list["upper"]))
-                gameplayer.room = roomi[f"{gameplayer.room}"].n_to
-                print(f"You are currently in the {gameplayer.room}.")
-                print(roomi[f"{gameplayer.room}"].description)
-                game = input("Please choose a direction or select q to quit:\n")
-            else:
-                print("There is nothing in that direction")
-                game = input("Please choose a direction or select q to quit:\n")
+            print("There is nothing in that direction")
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
+            print(f"You may explore rooms to the{diroutput}")
+            game = input("Please choose a direction or select q to quit:\n")
         else:
             gameplayer.room = roomi[f"{gameplayer.room}"].n_to
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
             print(f"You are currently in the {gameplayer.room}.")
-            print(roomi[f"{gameplayer.room}"].description)
+            print(roomi[f"{gameplayer.room}"].description, f" You may explore rooms to the{diroutput}")
             game = input("Please choose a direction or select q to quit:\n")
     elif(game.lower() == "s"):
         if(roomi[f"{gameplayer.room}"].s_to == ""):
-            if gameplayer.room == "hall":
-                print("Wolves are blocking the way outside. You can not leave.")
-                game = input("Please choose a direction or select q to quit:\n")
-            elif f"{gameplayer.room}" in room_list["ground"]:
-                roomi[f"{gameplayer.room}"].s_to = roomi[room_list["ground"][roomground]]
-                roomi[room_list["ground"][roomground]].n_to = roomi[f"{gameplayer.room}"]
-                roomground = random.randint(1, len(room_list["ground"]))
-                gameplayer.room = roomi[f"{gameplayer.room}"].s_to
-                print(f"You are currently in the {gameplayer.room}.")
-                print(roomi[f"{gameplayer.room}"].description)
-                game = input("Please choose a direction or select q to quit:\n")
-            elif f"{gameplayer.room}" in room_list["basement"]:
-                roomi[f"{gameplayer.room}"].s_to = roomi[room_list["basement"][roombase]]
-                roomi[room_list["basement"][roombase]].n_to = roomi[f"{gameplayer.room}"]
-                roombase = random.randint(1, len(room_list["basement"]))
-                gameplayer.room = roomi[f"{gameplayer.room}"].s_to
-                print(f"You are currently in the {gameplayer.room}.")
-                print(roomi[f"{gameplayer.room}"].description)
-                game = input("Please choose a direction or select q to quit:\n")
-            elif f"{gameplayer.room}" in room_list["upper"]:
-                roomi[f"{gameplayer.room}"].s_to = roomi[room_list["upper"][roomup]]
-                roomi[room_list["upper"][roomup]].n_to = roomi[f"{gameplayer.room}"]
-                roomup = random.randint(1, len(room_list["upper"]))
-                gameplayer.room = roomi[f"{gameplayer.room}"].s_to
-                print(f"You are currently in the {gameplayer.room}.")
-                print(roomi[f"{gameplayer.room}"].description)
-                game = input("Please choose a direction or select q to quit:\n")
-            else:
-                print("There is nothing in that direction")
-                game = input("Please choose a direction or select q to quit:\n")
+            print("There is nothing in that direction")
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
+            print(f"You may explore rooms to the{diroutput}")
+            game = input("Please choose a direction or select q to quit:\n")
         else:
             gameplayer.room = roomi[f"{gameplayer.room}"].s_to
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
             print(f"You are currently in the {gameplayer.room}.")
-            print(roomi[f"{gameplayer.room}"].description)
+            print(roomi[f"{gameplayer.room}"].description, f" You may explore rooms to the{diroutput}")
             game = input("Please choose a direction or select q to quit:\n")
     elif(game.lower() == "w"):
         if(roomi[f"{gameplayer.room}"].w_to == ""):
-            if f"{gameplayer.room}" in room_list["ground"]:
-                roomi[f"{gameplayer.room}"].w_to = roomi[room_list["ground"][roomground]]
-                roomi[room_list["ground"][roomground]].e_to = roomi[f"{gameplayer.room}"]
-                roomground = random.randint(1, len(room_list["ground"]))
-                gameplayer.room = roomi[f"{gameplayer.room}"].w_to
-                print(f"You are currently in the {gameplayer.room}.")
-                print(roomi[f"{gameplayer.room}"].description)
-                game = input("Please choose a direction or select q to quit:\n")
-            elif f"{gameplayer.room}" in room_list["basement"]:
-                roomi[f"{gameplayer.room}"].w_to = roomi[room_list["basement"][roombase]]
-                roomi[room_list["basement"][roombase]].e_to = roomi[f"{gameplayer.room}"]
-                roombase = random.randint(1, len(room_list["basement"]))
-                gameplayer.room = roomi[f"{gameplayer.room}"].w_to
-                print(f"You are currently in the {gameplayer.room}.")
-                print(roomi[f"{gameplayer.room}"].description)
-                game = input("Please choose a direction or select q to quit:\n")
-            elif f"{gameplayer.room}" in room_list["upper"]:
-                roomi[f"{gameplayer.room}"].w_to = roomi[room_list["upper"][roomup]]
-                roomi[room_list["upper"][roomup]].e_to = roomi[f"{gameplayer.room}"]
-                roomup = random.randint(1, len(room_list["upper"]))
-                gameplayer.room = roomi[f"{gameplayer.room}"].w_to
-                print(f"You are currently in the {gameplayer.room}.")
-                print(roomi[f"{gameplayer.room}"].description)
-                game = input("Please choose a direction or select q to quit:\n")
-            else:
-                print("There is nothing in that direction")
-                game = input("Please choose a direction or select q to quit:\n")
+            print("There is nothing in that direction")
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
+            print(f"You may explore rooms to the{diroutput}")
+            game = input("Please choose a direction or select q to quit:\n")
         else:
             gameplayer.room = roomi[f"{gameplayer.room}"].w_to
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
             print(f"You are currently in the {gameplayer.room}.")
-            print(roomi[f"{gameplayer.room}"].description)
+            print(roomi[f"{gameplayer.room}"].description, f" You may explore rooms to the{diroutput}")
             game = input("Please choose a direction or select q to quit:\n")
     elif(game.lower() == "e"):
         if(roomi[f"{gameplayer.room}"].e_to == ""):
-            if f"{gameplayer.room}" in room_list["ground"]:
-                roomi[f"{gameplayer.room}"].e_to = roomi[room_list["ground"][roomground]]
-                roomi[room_list["ground"][roomground]].w_to = roomi[f"{gameplayer.room}"]
-                roomground = random.randint(1, len(room_list["ground"]))
-                gameplayer.room = roomi[f"{gameplayer.room}"].e_to
-                print(f"You are currently in the {gameplayer.room}.")
-                print(roomi[f"{gameplayer.room}"].description)
-                game = input("Please choose a direction or select q to quit:\n")
-            elif f"{gameplayer.room}" in room_list["basement"]:
-                roomi[f"{gameplayer.room}"].e_to = roomi[room_list["basement"][roombase]]
-                roomi[room_list["basement"][roombase]].w_to = roomi[f"{gameplayer.room}"]
-                roombase = random.randint(1, len(room_list["basement"]))
-                gameplayer.room = roomi[f"{gameplayer.room}"].e_to
-                print(f"You are currently in the {gameplayer.room}.")
-                print(roomi[f"{gameplayer.room}"].description)
-                game = input("Please choose a direction or select q to quit:\n")
-            elif f"{gameplayer.room}" in room_list["upper"]:
-                roomi[f"{gameplayer.room}"].e_to = roomi[room_list["upper"][roomup]]
-                roomi[room_list["upper"][roomup]].w_to = roomi[f"{gameplayer.room}"]
-                roomup = random.randint(1, len(room_list["upper"]))
-                gameplayer.room = roomi[f"{gameplayer.room}"].e_to
-                print(f"You are currently in the {gameplayer.room}.")
-                print(roomi[f"{gameplayer.room}"].description)
-                game = input("Please choose a direction or select q to quit:\n")
-            else:
-                print("There is nothing in that direction")
-                game = input("Please choose a direction or select q to quit:\n")
+            print("There is nothing in that direction")
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
+            print(f"You may explore rooms to the{diroutput}")
+            game = input("Please choose a direction or select q to quit:\n")
         else:
             gameplayer.room = roomi[f"{gameplayer.room}"].e_to
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
             print(f"You are currently in the {gameplayer.room}.")
-            print(roomi[f"{gameplayer.room}"].description)
+            print(roomi[f"{gameplayer.room}"].description, f" You may explore rooms to the{diroutput}")
             game = input("Please choose a direction or select q to quit:\n")
     else:
         print("Invalid selection. Please choose a direction using n, s, e, w, or select q to quit")
