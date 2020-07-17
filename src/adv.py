@@ -1,44 +1,105 @@
-from room import Room
-
+from roominstances import roomi
+from roominstances import room_list
+from player import Player
+from event import Event
+from item import Item
+from omen import Omen
+import random
 # Declare all the rooms
 
-room = {
-    'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
 
-    'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
-
-    'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
-into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
-
-    'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
-
-    'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
-chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
-}
-
-
+print(room_list)
 # Link rooms together
-
-room['outside'].n_to = room['foyer']
-room['foyer'].s_to = room['outside']
-room['foyer'].n_to = room['overlook']
-room['foyer'].e_to = room['narrow']
-room['overlook'].s_to = room['foyer']
-room['narrow'].w_to = room['foyer']
-room['narrow'].n_to = room['treasure']
-room['treasure'].s_to = room['narrow']
-
+random.shuffle(room_list["ground"])
+print(room_list)
+random.shuffle(room_list["upper"])
+random.shuffle(room_list["basement"])
+roomi["hall"].n_to = roomi["foyer"]
+roomi["hall"].e_to = roomi[room_list["ground"][0]]
+roomi["hall"].w_to = roomi[room_list["ground"][3]]
+roomi[room_list["ground"][3]].e_to = roomi["hall"]
+roomi[room_list["ground"][0]].w_to = roomi["hall"]
+roomi[room_list["ground"][0]].n_to = roomi[room_list["ground"][1]]
+roomi[room_list["ground"][0]].e_to = roomi[room_list["ground"][2]]
+roomi[room_list["ground"][1]].s_to = roomi[room_list["ground"][0]]
+roomi[room_list["ground"][1]].w_to = roomi["foyer"]
+roomi[room_list["ground"][2]].w_to = roomi[room_list["ground"][0]]
+roomi["foyer"].n_to = roomi["stair"]
+roomi["foyer"].s_to = roomi["hall"]
+roomi["foyer"].w_to = roomi[room_list["ground"][4]]
+roomi[room_list["ground"][3]].n_to = roomi[room_list["ground"][4]]
+roomi[room_list["ground"][4]].s_to = roomi[room_list["ground"][3]]
+roomi[room_list["ground"][4]].w_to = roomi[room_list["ground"][5]]
+roomi[room_list["ground"][5]].e_to = roomi[room_list["ground"][4]]
+roomi[room_list["ground"][4]].n_to = roomi[room_list["ground"][6]]
+roomi[room_list["ground"][6]].s_to = roomi[room_list["ground"][4]]
+roomi[room_list["ground"][5]].n_to = roomi[room_list["ground"][7]]
+roomi[room_list["ground"][7]].s_to = roomi[room_list["ground"][5]]
+roomi[room_list["ground"][7]].e_to = roomi[room_list["ground"][6]]
+roomi["stair"].n_to = roomi["upper"]
+roomi["upper"].n_to = roomi["stair"]
+roomi["upper"].w_to = roomi[room_list["upper"][0]]
+roomi["upper"].s_to = roomi[room_list["upper"][1]]
+roomi[room_list["upper"][0]].e_to = roomi["upper"]
+roomi[room_list["upper"][1]].n_to = roomi["hall"]
+roomi[room_list["upper"][1]].w_to = roomi[room_list["upper"][2]]
+roomi[room_list["upper"][0]].s_to = roomi[room_list["upper"][2]]
+roomi[room_list["ground"][2]].e_to = roomi[room_list["ground"][1]]
+roomi["stair"].s_to = roomi["foyer"]
+roomi["stair"].e_to = roomi["basement"]
+roomi["basement"].w_to = roomi["stair"]
+roomi["basement"].e_to = roomi[room_list["basement"][0]]
+roomi[room_list["basement"][0]].w_to = roomi["basement"]
+roomi[room_list["basement"][0]].n_to = roomi[room_list["basement"][2]]
+roomi[room_list["basement"][2]].s_to = roomi[room_list["basement"][0]]
+roomi[room_list["basement"][0]].e_to = roomi[room_list["basement"][3]]
+roomi[room_list["basement"][3]].w_to = roomi[room_list["basement"][0]]
+roomi[room_list["basement"][3]].e_to = roomi[room_list["basement"][4]]
+roomi[room_list["basement"][4]].w_to = roomi[room_list["basement"][3]]
+roomi[room_list["basement"][2]].w_to = roomi[room_list["basement"][5]]
+roomi[room_list["basement"][5]].w_to = roomi[room_list["basement"][2]]
+roomi["basement"].s_to = roomi[room_list["basement"][1]]
+roomi[room_list["basement"][1]].n_to = roomi["basement"]
 #
 # Main
 #
 
 # Make a new player object that is currently in the 'outside' room.
+player = [
+    Player("Professor Longfellow", 3, 6, 4, 6, 3, 7, 5, 8),
+    Player("Darrin 'Flash' Williams", 3, 7, 6, 8, 3, 7, 3, 7),
+    Player("Heather Granville", 3, 8, 4, 8, 3, 6, 5, 8, "traitor"),
+    Player("Madame Zostra", 4, 6, 3, 7, 4, 8, 4, 6),
+    Player("Missy Dubourde", 3, 7, 5, 7, 3, 7, 4, 6),
+]
 
+items = {
+    "sword": Item("Bronze Sword", "A simple sword to use", 2, "might"),
+    "boots": Item("Hiking Boots", "Boots to help run", 2, "speed")
+}
+
+testevent = Event("test", "this is a test", 2, "knowledge")
+print(testevent)
+event = testevent.call_event(2)
+print(event)
+
+output = ""
+i = 1
+for p in player:
+    output += f"\n{i}. {p.name}"
+    i += 1
+
+selection = int(input(f"""Your starting player options are:{output}\n
+Select a player:
+"""))
+
+try:
+    gameplayer = player[selection - 1]
+    print(gameplayer)
+except:
+    print("Incorrect selection.\n")
+    selection = input(f"""Your starting player options are:{output}\n
+Select a player:""")
 # Write a loop that:
 #
 # * Prints the current room name
@@ -49,3 +110,239 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+print(f"You are currently in the {gameplayer.room}.")
+diroutput = ""
+directions = roomi[f"{gameplayer.room}"].get_directions()
+for i in range(len(directions)):
+    if(i == len(directions) - 1 and len(directions) >= 1):
+        diroutput += f" and {directions[i]}."
+    elif(i == len(directions) -1 and len(directions) == 0):
+        diroutput += f" {directions[i]}."
+    else:
+        diroutput += f" {directions[i]}"
+stat_name = ["might", "speed", "knowledge", "sanity"]
+stats = {"might": gameplayer.might, "speed": gameplayer.speed, "knowledge": gameplayer.knowledge, "sanity": gameplayer.sanity}
+print(roomi[f"{gameplayer.room}"].description, f"You may explore rooms to the{diroutput}")
+game = input("Please choose a direction to get started or select q to quit:\n")
+
+while(game != "q"):
+    if(game.lower() == "n"):
+        if(roomi[f"{gameplayer.room}"].n_to == ""):
+            print("There is nothing in that direction")
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
+            print(f"You may explore rooms to the{diroutput}")
+            game = input("Please choose a direction or select q to quit:\n")
+        else:
+            gameplayer.room = roomi[f"{gameplayer.room}"].n_to
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
+            print(f"You are currently in the {gameplayer.room}.")
+            print(roomi[f"{gameplayer.room}"].description, f" You may explore rooms to the{diroutput}")
+            game = input("Please choose a direction or select q to quit:\n")
+    elif(game.lower() == "s"):
+        if(roomi[f"{gameplayer.room}"].s_to == ""):
+            print("There is nothing in that direction")
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
+            print(f"You may explore rooms to the{diroutput}")
+            game = input("Please choose a direction or select q to quit:\n")
+        else:
+            gameplayer.room = roomi[f"{gameplayer.room}"].s_to
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
+            print(f"You are currently in the {gameplayer.room}.")
+            print(roomi[f"{gameplayer.room}"].description, f" You may explore rooms to the{diroutput}")
+            game = input("Please choose a direction or select q to quit:\n")
+    elif(game.lower() == "w"):
+        if(roomi[f"{gameplayer.room}"].w_to == ""):
+            print("There is nothing in that direction")
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
+            print(f"You may explore rooms to the{diroutput}")
+            game = input("Please choose a direction or select q to quit:\n")
+        else:
+            gameplayer.room = roomi[f"{gameplayer.room}"].w_to
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
+            print(f"You are currently in the {gameplayer.room}.")
+            print(roomi[f"{gameplayer.room}"].description, f" You may explore rooms to the{diroutput}")
+            game = input("Please choose a direction or select q to quit:\n")
+    elif(game.lower() == "e"):
+        if(roomi[f"{gameplayer.room}"].e_to == ""):
+            print("There is nothing in that direction")
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
+            print(f"You may explore rooms to the{diroutput}")
+            game = input("Please choose a direction or select q to quit:\n")
+        else:
+            gameplayer.room = roomi[f"{gameplayer.room}"].e_to
+            diroutput = ""
+            directions = roomi[f"{gameplayer.room}"].get_directions()
+            for i in range(len(directions)):
+                if(i == len(directions) - 1 and len(directions) >= 1):
+                    diroutput += f" and {directions[i]}."
+                elif(i == len(directions) -1 and len(directions) == 0):
+                    diroutput += f" {directions[i]}."
+                else:
+                    diroutput += f" {directions[i]}"
+            print(f"You are currently in the {gameplayer.room}.")
+            print(roomi[f"{gameplayer.room}"].description, f" You may explore rooms to the{diroutput}")
+            game = input("Please choose a direction or select q to quit:\n")
+    elif("take" in game.lower()):
+        command = game.split(" ")
+        print(items[command[1]])
+        gameplayer.item_held.append(command[1])
+        print(items[command[1]].on_take())
+        diroutput = ""
+        directions = roomi[f"{gameplayer.room}"].get_directions()
+        for i in range(len(directions)):
+            if(i == len(directions) - 1 and len(directions) >= 1):
+                diroutput += f" and {directions[i]}."
+            elif(i == len(directions) -1 and len(directions) == 0):
+                diroutput += f" {directions[i]}."
+            else:
+                diroutput += f" {directions[i]}"
+        print(f"You are currently in the {gameplayer.room}.")
+        print(roomi[f"{gameplayer.room}"].description, f" You may explore rooms to the{diroutput}")
+        game = input("Please choose a direction or select q to quit:\n")
+    elif("unequip" in game.lower()):
+        command = game.split(" ")
+        if(command[1] in gameplayer.item_held):
+            equipped = items[command[1]].on_unequip(gameplayer, stats)
+            print(equipped[0])
+            if(equipped[2] == stat_name[0]):
+                gameplayer.might = equipped[1]
+            elif(equipped[2] == stat_name[1]):
+                gameplayer.speed = equipped[1]
+            elif(equipped[2] == stat_name[2]):
+                gameplayer.knowledge = equipped[1]
+            elif(equipped[2] == stat_name[3]):
+                gameplayer.sanity == equipped[1]
+            print(gameplayer.might)
+        else:
+            print(f"You do not currently have the {command[1]}")
+        diroutput = ""
+        directions = roomi[f"{gameplayer.room}"].get_directions()
+        for i in range(len(directions)):
+            if(i == len(directions) - 1 and len(directions) >= 1):
+                diroutput += f" and {directions[i]}."
+            elif(i == len(directions) -1 and len(directions) == 0):
+                diroutput += f" {directions[i]}."
+            else:
+                diroutput += f" {directions[i]}"
+        print(f"You are currently in the {gameplayer.room}.")
+        print(roomi[f"{gameplayer.room}"].description, f" You may explore rooms to the{diroutput}")
+        game = input("Please choose a direction or select q to quit:\n")
+    elif("equip" in game.lower()):
+        command = game.split(" ")
+        if(command[1] in gameplayer.item_held):
+            equipped = items[command[1]].on_equip(gameplayer, stats)
+            print(equipped[0])
+            if(equipped[2] == stat_name[0]):
+                gameplayer.might = equipped[1]
+            elif(equipped[2] == stat_name[1]):
+                gameplayer.speed = equipped[1]
+            elif(equipped[2] == stat_name[2]):
+                gameplayer.knowledge = equipped[1]
+            elif(equipped[2] == stat_name[3]):
+                gameplayer.sanity = equipped[1]
+            print(gameplayer.might)
+        else:
+            print(f"You do not currently have the {command[1]}")
+        diroutput = ""
+        directions = roomi[f"{gameplayer.room}"].get_directions()
+        for i in range(len(directions)):
+            if(i == len(directions) - 1 and len(directions) >= 1):
+                diroutput += f" and {directions[i]}."
+            elif(i == len(directions) -1 and len(directions) == 0):
+                diroutput += f" {directions[i]}."
+            else:
+                diroutput += f" {directions[i]}"
+        print(f"You are currently in the {gameplayer.room}.")
+        print(roomi[f"{gameplayer.room}"].description, f" You may explore rooms to the{diroutput}")
+        game = input("Please choose a direction or select q to quit:\n")
+    elif("drop" in game.lower()):
+        command = game.split(" ")
+        if(items[command[1]].equipped == "true"):
+            if(command[1] in gameplayer.item_held):
+                equipped = items[command[1]].on_unequip(gameplayer, stats)
+                print(equipped[0])
+                if(equipped[2] == stat_name[0]):
+                    gameplayer.might = equipped[1]
+                elif(equipped[2] == stat_name[1]):
+                    gameplayer.speed = equipped[1]
+                elif(equipped[2] == stat_name[2]):
+                    gameplayer.knowledge = equipped[1]
+                elif(equipped[2] == stat_name[3]):
+                    gameplayer.sanity = equipped[1]
+                print(gameplayer.might)
+            else:
+                print(f"You do not currently have the {command[1]}")
+        print(items[command[1]])
+        gameplayer.item_held.remove(command[1])
+        print(items[command[1]].on_drop())
+        diroutput = ""
+        directions = roomi[f"{gameplayer.room}"].get_directions()
+        for i in range(len(directions)):
+            if(i == len(directions) - 1 and len(directions) >= 1):
+                diroutput += f" and {directions[i]}."
+            elif(i == len(directions) -1 and len(directions) == 0):
+                diroutput += f" {directions[i]}."
+            else:
+                diroutput += f" {directions[i]}"
+        print(f"You are currently in the {gameplayer.room}.")
+        print(roomi[f"{gameplayer.room}"].description, f" You may explore rooms to the{diroutput}")
+        game = input("Please choose a direction or select q to quit:\n")
+    else:
+        print("Invalid selection. Please choose a direction using n, s, e, w, or select q to quit")
+        game = input("Please choose a direction or select q to quit:\n")
