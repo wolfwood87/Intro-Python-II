@@ -1,7 +1,7 @@
 # Write a class to hold player information, e.g. what room they are in
 # currently.
 class Player():
-    def __init__(self, name, might, max_might, speed, max_speed, sanity, max_sanity, knowledge, max_knowledge, allegiance = "hero", room = "hall", item_held = ""):
+    def __init__(self, name, might, max_might, speed, max_speed, sanity, max_sanity, knowledge, max_knowledge, allegiance = "hero", room = "hall", item_held = ["",]):
         self.name = name
         self.allegiance = allegiance
         self.might = might
